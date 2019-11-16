@@ -1,0 +1,10 @@
+//A file of config:
+
+module.exports = {
+    host: '',
+    user: '',
+    database: ''
+}
+
+
+
