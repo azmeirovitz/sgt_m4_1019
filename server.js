@@ -17,13 +17,19 @@ const db = require('./db');
 const app = express();
 
 
-
+// lines 21 to 29 is 1 endpoint for the user in our server: GET info 
 app.get('/api/students', async (req, res) => {
-    const result = await db.query('SELECT * FROM grades');
+
+    //[[raw data], [Field Data]]
+// returns [[raw data, array of objects], [Field Data, info about the different fields: the raw data from each field, that's why it's so long--We don't need it]]
+    const [result] = await db.query('SELECT * FROM grades'); //brings item zero, the raw data
+
+    ///const dbResult = await db.query('SELECT * FROM grades');
+    /// const result = dbResulat[0];
 
     res.send({
         
-        message: 'This will contain students',
+        //message: 'This will contain students',
         students: result
     });
 });
