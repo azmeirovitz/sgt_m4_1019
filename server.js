@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('./db');
-
+const path = require('path');
 
 // const mysql = require('mysql2');
 
@@ -12,11 +12,15 @@ const db = require('./db');
 //     port: 3306
 // });
 
-// const db = pool.promise(); ///Doing this in another file
+// const db = pool.promise(); ///Doing this in another file /// Wrapping the connection, the pool, by a promise.
 
 const app = express();
 
+app.use(express.urlencoded({extended: false}));
+
 app.use(express.json()); 
+
+app.use(express.static(path.resolve(__dirname, 'public')));
 
 
 // lines 21 to 29 is 1 endpoint for the user in our server: GET info 
@@ -32,7 +36,31 @@ app.get('/api/students', async (req, res) => {
     res.send({
         
         //message: 'This will contain students',
-        students: result
+        students: result //This gives it the name students. in the inspect's console
+    });
+});
+
+app.get('/api/students/:id', async (req, res) => {
+    const {id} = req.params;
+
+    //Write a JOIN query to get a grade record and a related assignment 
+    //Send data back in response
+    //If a no data was found, record property should be null
+
+    // can be: const [result] instead of the [[record]]
+    const [[record]] = await db.execute(`SELECT g.course AS courseName, g.name AS studentName, g.grade AS courseGrade, a.name AS assignmentName, a.grade AS assignmentGrade
+    FROM grades AS g 
+    JOIN assignments AS a 
+    ON g.id=a.grade_id WHERE g.id=?`, [id]);
+
+    console.log('DB Result:', record);
+    
+    //const studentRecord= result[0]
+
+    res.send({
+        message: `Get a grade record and a related assignment for grade ID: ${id}`,
+        record: record  
+        // End of answer
     });
 });
 
